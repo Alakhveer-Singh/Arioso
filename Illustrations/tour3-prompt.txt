@@ -1,0 +1,31 @@
+Replacement for Illustrations/tour3.jpg (used in the app's welcome tour, page 3, "Widgets
+on Your Desktop", and on the website's "Desktop widgets" section).
+
+The current tour3.jpg is out of date: it shows a heart/like icon on every row (Arioso has
+never had a "like" feature) and a wavy graph/chart card — that was the old "System stats"
+widget, which has been removed from the app. Neither should appear in the replacement.
+
+Reference tour1.jpg and tour4.jpg for exact style/linework/tone.
+
+---
+
+Monochrome ink-pen illustration, same warm sepia/cream paper texture and crosshatching as
+the companion pieces. Same person, headphones on, one hand raised and pointing at the
+screen, sitting at the same night desk with the plant, mug, books and notebook.
+
+The iMac screen shows TWO separate rounded-rectangle cards side by side, with the desktop
+wallpaper visible faintly between them (not a full-bleed app window):
+- Left card: a short vertical list titled "Recently Played" — four rows, each a small square
+  album-cover thumbnail beside one or two handwritten squiggle-lines (song title + artist).
+  Each row ends in a small timestamp mark. No icon of any kind at the row's end.
+- Right card, taller: the lyrics widget — a square glowing album cover at the top, a thin
+  progress line beneath it, then five or six handwritten squiggle-lines of lyrics below that,
+  one bolder than the rest.
+Below both cards, spanning the bottom edge of the screen, draw a slim pill-shaped bar — a
+small square cover thumbnail on its left, one or two short squiggle-lines beside it, and
+four tiny short vertical tick-marks on its right (a simple "sound wave" glyph, not musical
+notes).
+
+Do NOT include: any heart/like icon anywhere, any graph, chart, wavy line-plot, or numeric
+readout, any "System" or stats card. Only the two widget cards and the slim bottom bar
+described above.

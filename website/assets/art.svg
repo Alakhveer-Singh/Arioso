@@ -1,0 +1,37 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#0e1318"/>
+      <stop offset=".55" stop-color="#1e282e"/>
+      <stop offset="1" stop-color="#6f808c"/>
+    </linearGradient>
+    <linearGradient id="sea" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1c252b"/>
+      <stop offset="1" stop-color="#0a0d10"/>
+    </linearGradient>
+    <radialGradient id="moonGlow" cx=".5" cy=".5" r=".5">
+      <stop offset="0" stop-color="#eef3f6" stop-opacity=".55"/>
+      <stop offset="1" stop-color="#eef3f6" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="400" height="400" fill="url(#sky)"/>
+  <g fill="#dfe6ea" opacity=".75">
+    <circle cx="48" cy="52" r="1.4"/><circle cx="120" cy="30" r="1"/><circle cx="170" cy="88" r="1.2"/>
+    <circle cx="232" cy="40" r="1"/><circle cx="352" cy="70" r="1.4"/><circle cx="84" cy="122" r="1"/>
+    <circle cx="310" cy="128" r="1"/><circle cx="26" cy="160" r="1.1"/><circle cx="378" cy="26" r="1"/>
+  </g>
+  <circle cx="282" cy="118" r="70" fill="url(#moonGlow)"/>
+  <circle cx="282" cy="118" r="26" fill="#f3f6f8"/>
+  <path d="M0 262 L58 214 L96 238 L154 176 L212 232 L252 206 L300 240 L350 200 L400 236 V290 H0Z" fill="#192027"/>
+  <path d="M0 276 L70 244 L130 266 L190 236 L250 262 L330 238 L400 262 V300 H0Z" fill="#13181c"/>
+  <rect y="290" width="400" height="110" fill="url(#sea)"/>
+  <g fill="#f3f6f8">
+    <rect x="262" y="300" width="40" height="3" rx="1.5" opacity=".8"/>
+    <rect x="252" y="314" width="58" height="3" rx="1.5" opacity=".6"/>
+    <rect x="268" y="328" width="30" height="3" rx="1.5" opacity=".5"/>
+    <rect x="244" y="344" width="70" height="3" rx="1.5" opacity=".35"/>
+    <rect x="262" y="362" width="42" height="3" rx="1.5" opacity=".25"/>
+  </g>
+  <path d="M116 330 q0 -26 12 -30 q-6 -10 2 -16 q9 -4 12 6 q2 8 -4 10 q12 6 12 30Z" fill="#07090b"/>
+  <path d="M60 360 q40 -18 90 -6 q50 12 110 -2 q70 -14 140 8 V400 H0 V372Z" fill="#07090b"/>
+</svg>

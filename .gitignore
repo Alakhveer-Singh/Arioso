@@ -1,0 +1,5 @@
+# Build output and build tools (the app, zip, dmg, Sparkle and the dmg venv are all
+# recreated by ./build_app.sh). Keep these out of the repo.
+build/
+.DS_Store
+.claude/

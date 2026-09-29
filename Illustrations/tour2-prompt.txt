@@ -1,0 +1,22 @@
+Replacement for Illustrations/tour2.jpg (used in the app's welcome tour, page 2, "Lyrics,
+Full Screen", and on the website's "Lyrics when you lock" section).
+
+Reference tour1.jpg and tour4.jpg for exact style/linework/tone.
+
+---
+
+Monochrome ink-pen illustration, warm sepia/cream paper texture, fine crosshatching,
+lo-fi cozy night-desk aesthetic. Same young person with tousled dark hair, glasses and
+over-ear headphones as before, seen from behind/side, sitting at a desk at night with a
+trailing plant, a mug, a stack of books and a notebook with a pen.
+
+They face a large iMac-style monitor whose screen shows a FULL-SCREEN lyrics view: on the
+left, a square album cover glowing softly behind it; below the cover, a thin horizontal
+progress line with a small time mark; to the right of the cover, seven or eight handwritten
+squiggle-lines representing lyric lines, one of them bolder/brighter than the rest (the line
+being sung), the others fainter above and below it, fading out top and bottom.
+
+Do NOT include: any heart/like icon, any play/pause/skip button, any list of tracks, any
+graph or waveform chart. The screen shows only the cover, the progress line, and the lyric
+lines — nothing else. No UI chrome beyond a thin rounded rectangle frame for the screen
+content, no menu bar detail.
