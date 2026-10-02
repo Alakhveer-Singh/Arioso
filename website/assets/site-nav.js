@@ -11,10 +11,10 @@
 .nav a{text-decoration:none;color:inherit}
 .nav .nbrand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:-.02em;color:var(--ink)}
 .nav .nbrand img{width:28px;height:28px;border-radius:8px}
-.nav-links{display:flex;gap:4px;margin-left:6px}
+.nav-links{display:flex;gap:4px;margin-left:auto}
 .nav-links a{font-size:14px;color:var(--ink-2);padding:8px 14px;border-radius:999px;transition:color .2s,background .2s}
 .nav-links a:hover,.nav-links a[aria-current]{color:var(--ink);background:rgba(243,246,248,.06)}
-.nav-r{margin-left:auto;display:flex;align-items:center;gap:8px}
+.nav-r{display:flex;align-items:center;gap:8px}
 .nav .btn{display:inline-flex;align-items:center;gap:8px;height:38px;padding:0 16px;border-radius:999px;font-weight:600;font-size:14px;transition:transform .25s,background .25s}
 .nav .btn svg{width:18px;height:18px;flex:none}
 .nav .btn-primary{background:linear-gradient(180deg,#fff,#d3dce2);color:#0b0f12}
@@ -35,6 +35,13 @@
 @media (max-width:1080px){.nav .nav-gh{width:38px;padding:0;justify-content:center}.nav .nav-gh .lbl{display:none}}
 @media (max-width:600px){.nav-soc{display:none}}
 @media (max-width:820px){.nav-links{display:none}}
+.nav .by{font-size:14px;color:var(--ink-2);padding:8px 13px 8px 14px;border-left:1px solid var(--line);border-radius:0 999px 999px 0;white-space:nowrap;text-decoration:none;transition:color .2s,background .2s}
+.nav .by:hover{color:var(--ink);background:rgba(243,246,248,.06)}
+[data-theme="light"] .nav .by:hover{background:rgba(15,20,24,.05)}
+.nav .by i{font-family:"Instrument Serif",ui-serif,Georgia,serif;font-size:16px;color:var(--ink)}
+@media (max-width:820px){.nav .by{border-left:0;border-radius:999px;margin-left:auto}}
+@media (max-width:480px){.nav .nav-r{margin-left:auto}}
+@media (max-width:480px){.nav .by{display:none}}
 body{padding-top:64px}`;
 
   const html = `<svg width="0" height="0" style="position:absolute" aria-hidden="true">
@@ -48,8 +55,9 @@ body{padding-top:64px}`;
 <nav class="nav" id="nav">
   <a class="nbrand" href="./"><img src="assets/icon.png" alt="">Arioso</a>
   <div class="nav-links">
-    <a href="./">Home</a><a href="privacy.html">Privacy Policy</a><a href="versions.html">Versions</a>
+    <a href="./">Home</a><a href="versions.html">Versions</a>
   </div>
+  <a class="by" href="https://alakhveer.com" rel="noopener">by <i>Alakhveer</i></a>
   <div class="nav-r">
     <a class="btn btn-ghost nav-soc nav-gh" href="https://github.com/Alakhveer-Singh/Arioso" target="_blank" rel="noopener" aria-label="View on GitHub" title="View on GitHub"><svg><use href="#i-github"/></svg><span class="lbl">View on GitHub</span></a>
     <a class="btn btn-ghost btn-icon btn-discord nav-soc" href="https://discord.gg/enRfBFpjb7" target="_blank" rel="noopener" aria-label="Join our Discord" title="Join our Discord"><svg><use href="#i-discord"/></svg></a>
@@ -58,6 +66,11 @@ body{padding-top:64px}`;
   </div>
 </nav>`;
 
+  if (!document.querySelector('link[href*="Instrument+Serif"]')) {
+    const font = document.createElement('link'); font.rel = 'stylesheet';
+    font.href = 'https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&display=swap';
+    document.head.appendChild(font);
+  }
   const style = document.createElement('style'); style.textContent = css; document.head.appendChild(style);
   document.addEventListener('DOMContentLoaded', () => {
     document.body.insertAdjacentHTML('afterbegin', html);

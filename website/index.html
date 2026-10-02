@@ -85,8 +85,15 @@ section{position:relative;padding:clamp(90px,12vw,150px) 0}
 .nav.scrolled{background:rgba(13,17,20,.8)}
 .brand{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:-.02em}
 .brand img{width:28px;height:28px;border-radius:8px}
-.nav-links{display:flex;gap:4px;margin-left:6px}
-.nav-r{margin-left:auto}
+.nav-links{display:flex;gap:4px;margin-left:auto}
+.nav-r{margin-left:0}
+.nav .by{font-size:14px;color:var(--ink-2);padding:8px 13px 8px 14px;border-left:1px solid var(--line);border-radius:0 999px 999px 0;white-space:nowrap;text-decoration:none;transition:color .2s,background .2s}
+.nav .by:hover{color:var(--ink);background:rgba(243,246,248,.06)}
+[data-theme="light"] .nav .by:hover{background:rgba(15,20,24,.05)}
+.nav .by i{font-family:"Instrument Serif",ui-serif,Georgia,serif;font-size:16px;color:var(--ink)}
+@media (max-width:820px){.nav .by{border-left:0;border-radius:999px;margin-left:auto}}
+@media (max-width:480px){.nav .nav-r{margin-left:auto}}
+@media (max-width:480px){.nav .by{display:none}}
 .nav-links a{font-size:14px;color:var(--ink-2);padding:8px 14px;border-radius:999px;transition:color .2s,background .2s}
 .nav-links a:hover,.nav-links a[aria-current]{color:var(--ink);background:rgba(243,246,248,.06)}
 .nav .btn{height:38px;padding:0 16px;font-size:14px}
@@ -526,8 +533,9 @@ footer .wrap{flex-direction:column;align-items:stretch;flex-wrap:nowrap;gap:22px
 <nav class="nav" id="nav">
   <a class="brand" href="#top"><img src="assets/icon.png" alt="">Arioso</a>
   <div class="nav-links">
-    <a href="./" aria-current="page">Home</a><a href="privacy.html">Privacy Policy</a><a href="versions.html">Versions</a>
+    <a href="./" aria-current="page">Home</a><a href="versions.html">Versions</a>
   </div>
+  <a class="by" href="https://alakhveer.com" rel="noopener">by <i>Alakhveer</i></a>
   <div class="nav-r">
     <a class="btn btn-ghost nav-soc nav-gh" href="https://github.com/Alakhveer-Singh/Arioso" target="_blank" rel="noopener" aria-label="View on GitHub" title="View on GitHub"><svg><use href="#i-github"/></svg><span class="lbl">View on GitHub</span></a>
     <a class="btn btn-ghost btn-icon btn-discord nav-soc" href="https://discord.gg/enRfBFpjb7" target="_blank" rel="noopener" aria-label="Join our Discord" title="Join our Discord"><svg><use href="#i-discord"/></svg></a>
