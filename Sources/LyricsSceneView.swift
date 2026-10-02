@@ -243,9 +243,27 @@ struct LyricsSceneView: View {
         .background(Color.black)
     }
 
+    /// The real desktop picture, read once — Native shows your own wallpaper rather than a
+    /// blurred derivative of the album art, so it sits closer to what the actual lock screen
+    /// looks like when nothing is playing.
+    private static let wallpaperImage: NSImage? = {
+        guard let screen = NSScreen.main, let url = NSWorkspace.shared.desktopImageURL(for: screen) else { return nil }
+        return NSImage(contentsOf: url)
+    }()
+
     @ViewBuilder
     private var background: some View {
-        if let backdrop = model.backdrop {
+        if scene == .native {
+            Group {
+                if let wallpaper = Self.wallpaperImage {
+                    Image(nsImage: wallpaper).resizable().aspectRatio(contentMode: .fill)
+                } else {
+                    LinearGradient(colors: [Color(red: 0.12, green: 0.16, blue: 0.19), Color(red: 0.03, green: 0.04, blue: 0.05)],
+                                  startPoint: .bottomLeading, endPoint: .topTrailing)
+                }
+            }
+            .ignoresSafeArea()
+        } else if let backdrop = model.backdrop {
             DriftingBackground(image: backdrop, look: look)
         } else {
             LinearGradient(
@@ -264,6 +282,7 @@ struct LyricsSceneView: View {
         case .spotlight: spotlight(np, size: size)
         case .vinyl: vinyl(np, size: size)
         case .minimal: minimal(np, size: size)
+        case .native: native(np, size: size)
         case .classic, .shuffle: classic(np, size: size)
         }
     }
@@ -359,6 +378,64 @@ struct LyricsSceneView: View {
         }
         .foregroundColor(.white)
         .padding(.horizontal, size.width * 0.1)
+    }
+
+    /// Your own wallpaper, with a system-style clock and login chrome, and a small frosted
+    /// card for the song — closer to the real lock screen than the other scenes, which take
+    /// the screen over with derived album-art backgrounds.
+    private func native(_ np: NowPlayingInfo, size: CGSize) -> some View {
+        VStack(spacing: 0) {
+            Spacer().frame(height: size.height * 0.08)
+            TimelineView(.periodic(from: .now, by: 1)) { context in
+                VStack(spacing: 4) {
+                    Text(context.date, format: .dateTime.weekday(.wide).day().month(.wide))
+                        .font(.system(size: 17, weight: .medium))
+                        .opacity(0.85)
+                    Text(context.date, format: .dateTime.hour().minute())
+                        .font(.system(size: 68, weight: .semibold, design: .rounded).monospacedDigit())
+                }
+            }
+            .foregroundColor(.white)
+            .shadow(color: .black.opacity(0.3), radius: 10)
+            Spacer()
+            nativeCard(np)
+                .padding(.bottom, 22)
+            VStack(spacing: 6) {
+                Image(systemName: "person.crop.circle.fill")
+                    .font(.system(size: 44))
+                    .foregroundColor(.white.opacity(0.95))
+                Text(NSFullUserName())
+                    .font(.system(size: 15, weight: .semibold))
+                    .foregroundColor(.white)
+                Text("Touch ID or Enter Password")
+                    .font(.system(size: 12))
+                    .foregroundColor(.white.opacity(0.65))
+            }
+            .shadow(color: .black.opacity(0.25), radius: 6)
+            Spacer().frame(height: size.height * 0.07)
+        }
+    }
+
+    /// The frosted "Now Playing" card, matching the system's own media-controls widget.
+    private func nativeCard(_ np: NowPlayingInfo) -> some View {
+        VStack(spacing: 14) {
+            HStack(spacing: 12) {
+                GlowingCover(artwork: np.artwork, glow: nil, size: 46)
+                VStack(alignment: .leading, spacing: 2) {
+                    Text(np.title).font(.system(size: 15, weight: .semibold)).foregroundColor(.white).lineLimit(1)
+                    Text(np.artist).font(.system(size: 13)).foregroundColor(.white.opacity(0.6)).lineLimit(1)
+                }
+                Spacer(minLength: 8)
+                Image(systemName: "waveform").font(.system(size: 15)).foregroundColor(.white.opacity(0.7))
+            }
+            PlaybackProgress(elapsedSeconds: model.elapsedSeconds, duration: np.duration, width: 300, fontSize: 12)
+            PlayerControls(model: model).frame(width: 260)
+        }
+        .padding(20)
+        .frame(width: 340)
+        .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 26, style: .continuous))
+        .overlay(RoundedRectangle(cornerRadius: 26, style: .continuous).strokeBorder(Color.white.opacity(0.22), lineWidth: 1))
+        .shadow(color: .black.opacity(0.35), radius: 30, y: 12)
     }
 
     /// Only the line being sung, crossfading as it changes.

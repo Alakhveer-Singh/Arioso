@@ -143,18 +143,15 @@ struct SettingsView: View {
     @StateObject private var nav = NavigationModel()
 
     var body: some View {
-        HStack(spacing: 0) {
-            Sidebar(nav: nav)
-                .frame(width: 230)
-            Rectangle().fill(Theme.paper.opacity(0.14)).frame(width: 1)
+        ZStack(alignment: .bottom) {
             ScrollView {
                 VStack(alignment: .leading, spacing: 22) {
                     header
                     page
                 }
-                .padding(.horizontal, 36)
-                .padding(.top, 48)
-                .padding(.bottom, 36)
+                .padding(.horizontal, 44)
+                .padding(.top, 52)
+                .padding(.bottom, 96)
                 .frame(maxWidth: .infinity, alignment: .leading)
                 .id(nav.tab)
                 .transition(.opacity.combined(with: .offset(y: 8)))
@@ -164,7 +161,11 @@ struct SettingsView: View {
                 LinearGradient(colors: [Theme.background, Theme.backgroundDeep],
                                startPoint: .top, endPoint: .bottom)
             )
+
+            BottomTabBar(nav: nav)
+                .padding(.bottom, 20)
         }
+        .overlay(alignment: .topTrailing) { FullScreenButton().padding(18) }
         .overlay(PaperGrain())
         .frame(minWidth: 860, minHeight: 620)
         .background(Theme.backgroundDeep)
@@ -198,32 +199,29 @@ struct SettingsView: View {
     }
 }
 
-// MARK: - Sidebar
+// MARK: - Bottom tab bar
 
-private struct Sidebar: View {
+/// A floating, pill-shaped tab bar docked to the bottom of the window, in place of a
+/// left sidebar — every tab is a rounded pill, and the selected one fills in solid.
+private struct BottomTabBar: View {
     @ObservedObject var nav: NavigationModel
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 0) {
-            Spacer().frame(height: 52)
-            VStack(spacing: 4) {
-                ForEach(SettingsTab.allCases) { tab in
-                    SidebarItem(tab: tab, isSelected: nav.tab == tab) {
-                        withAnimation(.easeOut(duration: 0.22)) { nav.tab = tab }
-                    }
+        HStack(spacing: 4) {
+            ForEach(SettingsTab.allCases) { tab in
+                BottomTabItem(tab: tab, isSelected: nav.tab == tab) {
+                    withAnimation(.easeOut(duration: 0.22)) { nav.tab = tab }
                 }
             }
-            .padding(.horizontal, 10)
-            Spacer()
-            FullScreenButton()
-                .padding(14)
         }
-        .frame(maxHeight: .infinity)
-        .background(Theme.sidebar)
+        .padding(6)
+        .background(Capsule().fill(Theme.paper.opacity(0.94)))
+        .overlay(Capsule().strokeBorder(Color.black.opacity(0.08), lineWidth: 1))
+        .shadow(color: .black.opacity(0.35), radius: 24, y: 10)
     }
 }
 
-private struct SidebarItem: View {
+private struct BottomTabItem: View {
     let tab: SettingsTab
     let isSelected: Bool
     let action: () -> Void
@@ -231,25 +229,18 @@ private struct SidebarItem: View {
 
     var body: some View {
         Button(action: action) {
-            HStack(spacing: 11) {
-                IconTile(symbol: tab.symbol, tint: tab.tint, size: 26)
-                Text(tab.title)
-                    .font(.system(size: 14, weight: isSelected ? .semibold : .medium))
-                    .foregroundColor(isSelected ? Theme.text : Theme.secondary)
-                Spacer()
+            HStack(spacing: 7) {
+                Image(systemName: tab.symbol).font(.system(size: 12.5, weight: .semibold))
+                Text(tab.title).font(.system(size: 13.5, weight: isSelected ? .semibold : .medium))
             }
-            .padding(.horizontal, 10)
-            .padding(.vertical, 8)
+            .foregroundColor(isSelected ? Theme.paper : Color.black.opacity(0.68))
+            .padding(.horizontal, 16)
+            .padding(.vertical, 9)
             .background(
-                RoundedRectangle(cornerRadius: 9, style: .continuous)
-                    .fill(isSelected ? Theme.accent.opacity(0.18)
-                          : (hover.isHovered ? Color.white.opacity(0.05) : .clear))
+                Capsule().fill(isSelected ? Theme.backgroundDeep
+                               : (hover.isHovered ? Color.black.opacity(0.06) : .clear))
             )
-            .overlay(
-                RoundedRectangle(cornerRadius: 9, style: .continuous)
-                    .strokeBorder(isSelected ? Theme.accent.opacity(0.35) : .clear, lineWidth: 1)
-            )
-            .contentShape(Rectangle())
+            .contentShape(Capsule())
         }
         .buttonStyle(.plain)
         .onHover { hover.isHovered = $0 }
@@ -261,17 +252,16 @@ private struct FullScreenButton: View {
 
     var body: some View {
         Button { FullScreenLyrics.shared.show() } label: {
-            HStack(spacing: 8) {
-                Image(systemName: "play.fill").font(.system(size: 11, weight: .bold))
-                Text("Open Full Screen").font(.system(size: 13, weight: .semibold))
+            HStack(spacing: 7) {
+                Image(systemName: "play.fill").font(.system(size: 10, weight: .bold))
+                Text("Open Full Screen").font(.system(size: 12.5, weight: .semibold))
             }
             .foregroundColor(Theme.backgroundDeep)
-            .frame(maxWidth: .infinity)
-            .padding(.vertical, 10)
+            .padding(.horizontal, 14)
+            .padding(.vertical, 9)
             .background(
-                RoundedRectangle(cornerRadius: 10, style: .continuous)
-                    .fill(LinearGradient(colors: [Theme.accent, Theme.accentDeep],
-                                         startPoint: .top, endPoint: .bottom))
+                Capsule().fill(LinearGradient(colors: [Theme.accent, Theme.accentDeep],
+                                              startPoint: .top, endPoint: .bottom))
             )
             .brightness(hover.isHovered ? 0.06 : 0)
             .shadow(color: Theme.accent.opacity(0.3), radius: hover.isHovered ? 10 : 4, y: 2)
@@ -1117,6 +1107,23 @@ struct LookPreview: View {
                 Text("9:41").font(.system(size: 64, weight: .thin, design: .rounded)).foregroundColor(.white)
                 Text("Friday, 25 September").font(.system(size: 11, weight: .medium)).foregroundColor(.white.opacity(0.7))
                 lyric("Every word, every line", opacity: 1).padding(.top, 10)
+            }
+        case .native:
+            VStack(spacing: 14) {
+                Text("9:41").font(.system(size: 36, weight: .semibold, design: .rounded)).foregroundColor(.white)
+                HStack(spacing: 8) {
+                    cover(28, glow: false)
+                    VStack(alignment: .leading, spacing: 1) {
+                        Text("Song").font(.system(size: 10, weight: .semibold)).foregroundColor(.white)
+                        Text("Artist").font(.system(size: 9)).foregroundColor(.white.opacity(0.6))
+                    }
+                    Spacer(minLength: 4)
+                    Image(systemName: "waveform").font(.system(size: 10)).foregroundColor(.white.opacity(0.6))
+                }
+                .padding(10)
+                .frame(width: 150)
+                .background(.ultraThinMaterial, in: RoundedRectangle(cornerRadius: 14, style: .continuous))
+                .overlay(RoundedRectangle(cornerRadius: 14, style: .continuous).strokeBorder(Color.white.opacity(0.2), lineWidth: 1))
             }
         }
     }

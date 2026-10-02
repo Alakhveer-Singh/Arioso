@@ -1,11 +1,12 @@
 import AppKit
-import CoreImage
 
-/// Turns the current lyric line into a shareable square image: the album
-/// art, softly blurred, behind the cover and the line itself. Copied to the
-/// clipboard and saved to ~/Pictures/Arioso.
+/// Turns the current lyric line into a shareable wide card: the album art on the
+/// left, the song title and the line itself beside it, and an "Arioso" wordmark
+/// underneath. Copied to the clipboard and saved to ~/Pictures/Arioso.
 enum ShareCard {
-    private static let size = CGSize(width: 1200, height: 1200)
+    private static let size = CGSize(width: 1760, height: 780)
+    private static let margin: CGFloat = 56
+    private static let cornerRadius: CGFloat = 48
 
     /// Builds the card for whatever's playing right now, or nil if nothing is.
     static func generate(from model: LyricsSceneModel) -> NSImage? {
@@ -22,57 +23,36 @@ enum ShareCard {
 
     private static func render(line: String, title: String, artist: String, artwork: NSImage?) -> NSImage {
         NSImage(size: size, flipped: false) { rect in
-            drawBackground(in: rect, artwork: artwork)
-            drawCover(in: rect, artwork: artwork)
-            drawText(in: rect, line: line, title: title, artist: artist)
-            drawWordmark(in: rect)
+            // The whole card is one rounded rect; everything outside it stays transparent,
+            // so it drops onto a page or a chat bubble without a hard rectangular edge.
+            NSBezierPath(roundedRect: rect, xRadius: cornerRadius, yRadius: cornerRadius).addClip()
+            drawBackground(in: rect)
+            let coverFrame = drawCover(in: rect, artwork: artwork)
+            drawText(in: rect, coverFrame: coverFrame, line: line, title: title, artist: artist)
+            drawWordmark(in: rect, coverFrame: coverFrame)
             return true
         }
     }
 
-    private static func drawBackground(in rect: CGRect, artwork: NSImage?) {
-        if let artwork, let blurred = blur(artwork, radius: 60) {
-            blurred.draw(in: rect.insetBy(dx: -40, dy: -40), from: .zero, operation: .copy, fraction: 1)
-        } else {
-            NSGradient(colors: [NSColor(red: 0.16, green: 0.21, blue: 0.27, alpha: 1),
-                                NSColor(red: 0.06, green: 0.08, blue: 0.11, alpha: 1)])?
-                .draw(in: rect, angle: -60)
-        }
-        NSColor.black.withAlphaComponent(0.42).setFill()
-        rect.fill()
+    private static func drawBackground(in rect: CGRect) {
+        NSGradient(colors: [NSColor(red: 0.22, green: 0.24, blue: 0.27, alpha: 1),
+                            NSColor(red: 0.09, green: 0.10, blue: 0.12, alpha: 1)])?
+            .draw(in: rect, angle: -60)
     }
 
-    private static func blur(_ image: NSImage, radius: CGFloat) -> NSImage? {
-        guard let tiff = image.tiffRepresentation, let ci = CIImage(data: tiff) else { return nil }
-        let filter = CIFilter(name: "CIGaussianBlur")
-        filter?.setValue(ci, forKey: kCIInputImageKey)
-        filter?.setValue(radius, forKey: kCIInputRadiusKey)
-        guard let output = filter?.outputImage else { return nil }
-        let context = CIContext()
-        guard let cg = context.createCGImage(output, from: ci.extent) else { return nil }
-        return NSImage(cgImage: cg, size: image.size)
-    }
-
-    /// Cover art, upper-left, with a rounded corner and a soft shadow.
-    private static func drawCover(in rect: CGRect, artwork: NSImage?) {
-        let side: CGFloat = 220
-        let origin = CGPoint(x: 90, y: rect.height - 90 - side)
-        let frame = CGRect(origin: origin, size: CGSize(width: side, height: side))
-        let path = NSBezierPath(roundedRect: frame, xRadius: 24, yRadius: 24)
-
-        NSGraphicsContext.saveGraphicsState()
-        let shadow = NSShadow()
-        shadow.shadowBlurRadius = 30
-        shadow.shadowOffset = NSSize(width: 0, height: -6)
-        shadow.shadowColor = NSColor.black.withAlphaComponent(0.5)
-        shadow.set()
-        (artwork ?? placeholderCover()).draw(in: frame)
-        NSGraphicsContext.restoreGraphicsState()
+    /// Cover art, left edge, filling the card's height minus the margin. Returns its frame
+    /// so the text and wordmark can line up against it.
+    @discardableResult
+    private static func drawCover(in rect: CGRect, artwork: NSImage?) -> CGRect {
+        let side = rect.height - margin * 2
+        let frame = CGRect(x: margin, y: margin, width: side, height: side)
+        let path = NSBezierPath(roundedRect: frame, xRadius: 22, yRadius: 22)
 
         NSGraphicsContext.saveGraphicsState()
         path.addClip()
         (artwork ?? placeholderCover()).draw(in: frame)
         NSGraphicsContext.restoreGraphicsState()
+        return frame
     }
 
     private static func placeholderCover() -> NSImage {
@@ -83,47 +63,57 @@ enum ShareCard {
         }
     }
 
-    private static func drawText(in rect: CGRect, line: String, title: String, artist: String) {
-        let margin: CGFloat = 90
-        let textWidth = rect.width - margin * 2
+    /// A serif "New York" if it's available (macOS 12+), else Georgia, else the system serif fallback.
+    private static func serifFont(size: CGFloat) -> NSFont {
+        NSFont(name: "New York", size: size) ?? NSFont(name: "Georgia", size: size)
+            ?? NSFont.systemFont(ofSize: size)
+    }
+
+    private static func drawText(in rect: CGRect, coverFrame: CGRect, line: String, title: String, artist: String) {
+        let textX = coverFrame.maxX + margin
+        let textWidth = rect.width - textX - margin
+
+        let titleAttrs: [NSAttributedString.Key: Any] = [
+            .font: serifFont(size: 46),
+            .foregroundColor: NSColor.white,
+        ]
+        let titleRect = CGRect(x: textX, y: rect.height - margin - 8 - 56, width: textWidth, height: 56)
+        title.uppercased().draw(with: titleRect, options: [.usesLineFragmentOrigin, .truncatesLastVisibleLine],
+                                attributes: titleAttrs)
 
         let lineStyle = NSMutableParagraphStyle()
         lineStyle.lineBreakMode = .byWordWrapping
-        lineStyle.lineSpacing = 6
+        lineStyle.lineSpacing = 8
         let lineAttrs: [NSAttributedString.Key: Any] = [
-            .font: NSFont.systemFont(ofSize: 64, weight: .bold),
+            .font: NSFont.systemFont(ofSize: 42, weight: .bold),
             .foregroundColor: NSColor.white,
             .paragraphStyle: lineStyle,
         ]
         let quoted = "\u{201C}\(line)\u{201D}"
-        let lineRect = CGRect(x: margin, y: 260, width: textWidth, height: rect.height - 260 - 300)
-        // Bottom-align by measuring first, then drawing at the bottom of the box.
-        let measured = quoted.boundingRect(with: CGSize(width: textWidth, height: .greatestFiniteMagnitude),
-                                           options: [.usesLineFragmentOrigin], attributes: lineAttrs)
-        let drawRect = CGRect(x: lineRect.minX, y: lineRect.maxY - measured.height,
-                              width: textWidth, height: measured.height)
-        quoted.draw(with: drawRect, options: [.usesLineFragmentOrigin], attributes: lineAttrs)
-
-        let songAttrs: [NSAttributedString.Key: Any] = [
-            .font: NSFont.systemFont(ofSize: 30, weight: .semibold),
-            .foregroundColor: NSColor.white,
-        ]
-        let artistAttrs: [NSAttributedString.Key: Any] = [
-            .font: NSFont.systemFont(ofSize: 26, weight: .regular),
-            .foregroundColor: NSColor.white.withAlphaComponent(0.7),
-        ]
-        title.draw(at: CGPoint(x: margin, y: 170), withAttributes: songAttrs)
-        if !artist.isEmpty {
-            artist.draw(at: CGPoint(x: margin, y: 130), withAttributes: artistAttrs)
-        }
+        let quoteTop = titleRect.minY - 28
+        let quoteRect = CGRect(x: textX, y: margin, width: textWidth, height: quoteTop - margin)
+        quoted.draw(with: CGRect(x: quoteRect.minX, y: quoteRect.minY, width: quoteRect.width, height: quoteTop - margin),
+                   options: [.usesLineFragmentOrigin, .truncatesLastVisibleLine], attributes: lineAttrs)
     }
 
-    private static func drawWordmark(in rect: CGRect) {
-        let attrs: [NSAttributedString.Key: Any] = [
-            .font: NSFont.systemFont(ofSize: 22, weight: .bold),
-            .foregroundColor: NSColor.white.withAlphaComponent(0.55),
+    /// Arioso's own app icon plus "Shared by Arioso", bottom-left of the text column.
+    private static func drawWordmark(in rect: CGRect, coverFrame: CGRect) {
+        let iconSide: CGFloat = 44
+        let iconFrame = CGRect(x: coverFrame.maxX + margin, y: margin, width: iconSide, height: iconSide)
+        let icon = NSApp.applicationIconImage ?? placeholderCover()
+        let path = NSBezierPath(roundedRect: iconFrame, xRadius: 12, yRadius: 12)
+        NSGraphicsContext.saveGraphicsState()
+        path.addClip()
+        icon.draw(in: iconFrame)
+        NSGraphicsContext.restoreGraphicsState()
+
+        let labelAttrs: [NSAttributedString.Key: Any] = [
+            .font: NSFont.systemFont(ofSize: 22, weight: .medium),
+            .foregroundColor: NSColor.white.withAlphaComponent(0.85),
         ]
-        "♪ Arioso".draw(at: CGPoint(x: 90, y: rect.height - 70), withAttributes: attrs)
+        let label = "Shared by Arioso" as NSString
+        let labelSize = label.size(withAttributes: labelAttrs)
+        label.draw(at: CGPoint(x: iconFrame.maxX + 14, y: iconFrame.midY - labelSize.height / 2), withAttributes: labelAttrs)
     }
 
     // MARK: - Delivery

@@ -124,6 +124,16 @@ cat > "$CONTENTS/Info.plist" <<EOF
 	<key>LSApplicationCategoryType</key>
 	<string>public.app-category.music</string>
 	<!-- No Dock icon until a window opens; widgets and the player run in the background. -->
+	<!-- arioso:// lets the website's "Open Arioso" button launch the app. -->
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>Arioso</string>
+			<key>CFBundleURLSchemes</key>
+			<array><string>arioso</string></array>
+		</dict>
+	</array>
 	<key>LSUIElement</key>
 	<true/>
 	<key>NSAppleEventsUsageDescription</key>

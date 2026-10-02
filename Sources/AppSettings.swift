@@ -266,7 +266,7 @@ struct TranslationLanguage: Identifiable {
 
 /// Layouts for the full-screen lyrics view.
 enum LockScene: String, Codable, CaseIterable {
-    case classic, spotlight, vinyl, minimal, shuffle
+    case classic, spotlight, vinyl, minimal, native, shuffle
 
     var title: String {
         switch self {
@@ -274,6 +274,7 @@ enum LockScene: String, Codable, CaseIterable {
         case .spotlight: return "Spotlight"
         case .vinyl: return "Vinyl"
         case .minimal: return "Minimal"
+        case .native: return "Native"
         case .shuffle: return "Shuffle"
         }
     }
@@ -284,6 +285,7 @@ enum LockScene: String, Codable, CaseIterable {
         case .spotlight: return "text.aligncenter"
         case .vinyl: return "record.circle"
         case .minimal: return "clock.fill"
+        case .native: return "lock.display"
         case .shuffle: return "shuffle"
         }
     }
@@ -297,6 +299,7 @@ enum LockScene: String, Codable, CaseIterable {
         case .spotlight: return "Giant lyrics in the middle of the screen."
         case .vinyl: return "Your album spinning on a record."
         case .minimal: return "A big clock and just the line being sung."
+        case .native: return "Your own wallpaper, with a small card like the system's media controls."
         case .shuffle: return "A different scene for every song."
         }
     }

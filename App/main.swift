@@ -100,6 +100,12 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         return true
     }
 
+    /// arioso:// links (the website's "Open Arioso" button) open Settings, like a reopen.
+    func application(_ application: NSApplication, open urls: [URL]) {
+        guard urls.contains(where: { $0.scheme == "arioso" }) else { return }
+        if onboardingWindow == nil { showSettings() }
+    }
+
     /// Closing Settings keeps the widgets and shortcut running.
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool { false }
 
