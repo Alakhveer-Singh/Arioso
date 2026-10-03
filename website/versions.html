@@ -50,6 +50,17 @@ h1 em{font-family:var(--serif);font-style:italic;font-weight:400;color:var(--amb
 .rel li b{color:var(--ink);font-weight:600}
 footer{margin-top:56px;padding-top:24px;border-top:1px solid var(--line);color:var(--ink-3);font-size:14px}
 footer a:hover{color:var(--ink)}
+
+/* ── Brand color layer ── */
+:root{--accent:#fbbf24;--accent-2:#fb7185;--amber:#fbbf24;--ember:#fb7185;--accent-soft:rgba(251,191,36,.12);--glow:rgba(251,191,36,.45);--c1:#fbbf24;--c2:#fb7185}
+:root[data-theme="light"]{--accent:#b45309;--accent-2:#be123c;--amber:#b45309;--ember:#be123c;--accent-soft:rgba(180,83,9,.09);--glow:rgba(180,83,9,.32);--c1:#b45309;--c2:#be123c}
+.btn-primary,[data-theme="light"] .btn-primary{background:linear-gradient(135deg,var(--c1),var(--c2));color:#0b0f12;box-shadow:0 10px 40px -10px var(--glow),inset 0 1px 0 rgba(255,255,255,.35)}
+[data-theme="light"] .btn-primary{color:#fff}
+.hero::before,[data-theme="light"] .hero::before{background:radial-gradient(40% 50% at 50% 30%,rgba(251,191,36,.30),transparent 70%),radial-gradient(30% 40% at 20% 10%,rgba(251,113,133,.22),transparent 70%),radial-gradient(30% 40% at 85% 20%,rgba(251,191,36,.16),transparent 70%)}
+h1 em,h2 em,em.s{background:linear-gradient(120deg,var(--c1),var(--c2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.eyebrow{color:var(--accent)}
+h1 em:has(.w),h2 em:has(.w),em.s:has(.w){background:none;color:inherit}
+h1 em .w,h2 em .w,em.s .w{padding:0 .1em .22em;margin:0 -.1em -.22em;background:linear-gradient(120deg,var(--c1),var(--c2));-webkit-background-clip:text;background-clip:text;color:transparent}
 </style>
 </head>
 <body>
